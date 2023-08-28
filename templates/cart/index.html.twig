@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier
+{% endblock %}
+
+{% block body %}
+	{% if panier|length > 0 %}
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Image</th>
+					<th scope="col">Produit</th>
+					<th scope="col">Quantité</th>
+					<th scope="col">Prix</th>
+					<th scope="col">Total</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% set total = null %}
+				{% set quantityTotal = null %}
+
+				{% for product in panier %}
+					<tr>
+						<th scope="row">
+							<img src="/uploads/products/{{ product.product.image }}" style="width: 150px; height: 150px" class="card-img-top" alt="{{ product.product.name }}">
+						</th>
+						<td>{{ product.product.name }}</td>
+						<td>
+							<a href="{{ path('app_add', {'id': product.product.id})}}" style="text-decoration:none;">
+								<i class="fa-solid fa-plus"></i>
+							</a>
+							<span>{{ product.quantity }}</span>
+							<a href="{{ path('app_decrease', {'id': product.product.id})}}" style="text-decoration:none;">
+								<i class="fa-solid fa-minus"></i>
+							</a>
+						</td>
+						<td>{{ (product.product.price / 100)|number_format(2, ',') }}
+							€</td>
+						<td>{{ ((product.product.price * product.quantity) / 100)|number_format(2, ',') }}
+							€</td>
+						<td>
+							<a href="{{ path('app_delete', {'id': product.product.id})}}">
+								<i class="fa-solid fa-trash-can" style="color:red;"></i>
+							</a>
+						</td>
+					</tr>
+					{% set total = total + (product.product.price * product.quantity)%}
+					{% set quantityTotal = quantityTotal + product.quantity %}
+				{% endfor %}
+				<tr>
+					<td></td>
+					<td></td>
+					<td>{{quantityTotal}}
+						articles</td>
+					<td></td>
+					<td>{{(total / 100)|number_format(2,',')}} €</td>
+				</tr>
+
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>
+						<a href="#" class="btn btn-success">Payer</a>
+					</td>
+					<td>
+						<a href="{{ path('app_remove')}}" class="btn btn-danger">Supprimer le panier</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	{% else %}
+		<p>Votre panier est vide.
+			<a href="{{ path('app_products')}}" class="btn btn-primary">Retournez aux produits</a>
+		</p>
+	{% endif %}
+{% endblock %}
