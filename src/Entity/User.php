@@ -50,6 +50,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $birthday_date;
 
+    public function __toString()
+    {
+        return $this->getFullName();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

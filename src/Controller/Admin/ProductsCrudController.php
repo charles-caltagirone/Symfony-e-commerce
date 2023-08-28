@@ -2,13 +2,16 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Images;
 use App\Entity\Products;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -34,12 +37,20 @@ class ProductsCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->hideOnForm(),
-
+            
             TextField::new('name', 'Nom du produit'),
 
             SlugField::new('slug', 'Affichage dans URL')
                 ->setTargetFieldName('name')
                 ->hideOnIndex(),
+
+            ImageField::new('image', 'Image')
+                ->setBasePath('uploads/products')
+                ->setUploadDir('public/uploads/products')
+                ->setUploadedFileNamePattern('[randomhash].[extension]')
+                ->setRequired(true),
+
+            AssociationField::new('categorie', 'Catégorie'),
 
             TextareaField::new('description'),
 
@@ -49,6 +60,7 @@ class ProductsCrudController extends AbstractCrudController
             DateTimeField::new('createdAt', "Date d'ajout")
                 ->setFormat('dd.MM.yyyy')
                 ->hideOnForm(),
+
         ];
     }
 
