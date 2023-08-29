@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte
+{% endblock %}
+
+{% block body %}
+{# {% for user in users %} #}
+	
+{# {% endfor %} #}
+
+	<a href="{{ path('app_edit_user')}}" class="btn btn-primary">Modifier ses informations</a>
+{% endblock %}

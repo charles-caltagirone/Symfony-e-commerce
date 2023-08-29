@@ -14,9 +14,13 @@ class CartController extends AbstractController
      */
     public function index(Cart $panier): Response
     {
-        return $this->render('cart/index.html.twig', [
-            'panier' => $panier->getFull(),
-        ]);
+        if ($this->getUser()) {
+            return $this->render('cart/index.html.twig', [
+                'panier' => $panier->getFull(),
+            ]);
+        } else {
+            return $this->redirectToRoute('app_home');
+        }
     }
 
     /**

@@ -18,7 +18,11 @@ class DashboardController extends AbstractDashboardController
      */
     public function index(): Response
     {
-        return parent::index();
+        if ($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN') == false) {
+            return $this->redirectToRoute('app_home');
+        } else {
+            return parent::index();
+        }
     }
 
     public function configureDashboard(): Dashboard

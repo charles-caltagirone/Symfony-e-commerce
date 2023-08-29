@@ -53,12 +53,33 @@
 							<button class="btn btn-outline-success" type="submit">Search</button>
 						</form>
 						<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-							<li class="nav-link">
-								<a href="{{ path('app_login') }}">Connexion</a>
-							</li>
-							<li class="nav-link">
-								<a href="{{ path('app_logout') }}">Déconnexion</a>
-							</li>
+							{% if app.user %}
+
+								{% if is_granted('ROLE_ADMIN') %}
+									<li class="nav-link">
+										<a href="{{ path('admin') }}">Panel Admin</a>
+									</li>
+								{% endif %}
+
+								<li class="nav-link">
+									<a href="{{ path('app_cart') }}">
+										<i class="fa-solid fa-cart-shopping"></i>
+									</a>
+								</li>
+								<li class="nav-link">
+									<a href="{{ path('app_user') }}">Profil</a>
+								</li>
+								<li class="nav-link">
+									<a href="{{ path('app_logout') }}">Déconnexion</a>
+								</li>
+							{% else %}
+								<li class="nav-link">
+									<a href="{{ path('app_login') }}">Connexion</a>
+								</li>
+								<li class="nav-link">
+									<a href="{{ path('app_inscription') }}">S'inscrire</a>
+								</li>
+							{% endif %}
 						</ul>
 					</div>
 				</div>
@@ -118,7 +139,7 @@
 							</h6>
 							<p>
 								Here you can use rows and columns to organize your footer content. Lorem ipsum
-																																																																            dolor sit amet, consectetur adipisicing elit.
+																																																																																            dolor sit amet, consectetur adipisicing elit.
 							</p>
 						</div>
 						<!-- Grid column -->

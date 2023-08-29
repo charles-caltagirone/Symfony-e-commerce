@@ -27,19 +27,32 @@ class RegisterController extends AbstractController
     public function index(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();
-        $form = $this->createForm(RegisterType::class); // récupérer le formulaire du dossier form
+        
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        $form = $this->createForm(RegisterType::class, $user); // récupérer le formulaire du dossier form
 
         $form->handleRequest($request); // récupère la requête
 
         if ($form->isSubmitted() && $form->isValid()) { // vérification du form, comme isset en natif
-            $user = $form->getData();
+            $user = $form->getData(); //récupère la saisie
+
+            $user_mail = $user->getEmail(); 
+
+            if($user_mail == $this->getParameter("mail_admin")){
+                $user->setRoles(['ROLE_ADMIN']);
+            }else{
+                $user->setRoles(['ROLE_USER']);
+            }
+            
             $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword()); // salage du mdp
             $user->setPassword($hashedPassword);
-
-
+            
             $this->entityManager->persist($user); // équivalent du prepare PDO
             $this->entityManager->flush(); // équivalent du execute PDO
-
+            
             return $this->redirectToRoute('app_login');
         }
 
