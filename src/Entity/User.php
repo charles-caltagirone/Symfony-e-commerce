@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -48,7 +50,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="datetime")
      */
-    private $birthday_date;
+    private $birthdayDate;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Adresses::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $adresses;
+
+    public function __construct()
+    {
+        $this->adresses = new ArrayCollection();
+    }
 
     public function __toString()
     {
@@ -173,14 +185,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->getLastname() . ' ' . $this->getFirstname();
     }
 
-    public function getBirthdayDate(): ?\DateTime
+    public function getBirthdayDate(): ?\DateTimeInterface
     {
-        return $this->birthday_date;
+        return $this->birthdayDate;
     }
 
-    public function setBirthdayDate(\DateTime $birthday_date): self
+    public function setBirthdayDate(\DateTimeInterface $birthdayDate): self
     {
-        $this->birthday_date = $birthday_date;
+        $this->birthdayDate = $birthdayDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Adresses>
+     */
+    public function getAdresses(): Collection
+    {
+        return $this->adresses;
+    }
+
+    public function addAdress(Adresses $adress): self
+    {
+        if (!$this->adresses->contains($adress)) {
+            $this->adresses[] = $adress;
+            $adress->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdress(Adresses $adress): self
+    {
+        if ($this->adresses->removeElement($adress)) {
+            // set the owning side to null (unless already changed)
+            if ($adress->getUser() === $this) {
+                $adress->setUser(null);
+            }
+        }
 
         return $this;
     }
