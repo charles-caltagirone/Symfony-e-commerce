@@ -63,6 +63,11 @@ class Adresses
      */
     private $user;
 
+    public function __toString()
+    {
+        return $this->getFullAdress();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

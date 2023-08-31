@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Récap commande
+{% endblock %}
+
+{% block body %}
+	{% for product in panier %}
+		<img src="/uploads/products/{{ product.product.image }}" style="width: 150px; height: 150px" class="card-img-top" alt="{{ product.product.name }}">
+		{{ product.product.name }}
+		x{{ product.quantity }}
+	{% endfor %}
+
+	{# {% set formHtml %} #}
+	{# {{ form(form, {action: path('app_recap_order')}) }} #}
+		{# {% endset %} #}
+
+		{# {{ formHtml|replace({'[br]': '<br/>'})|raw }} #}
+
+	{% endblock %}
