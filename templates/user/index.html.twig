@@ -4,9 +4,33 @@
 {% endblock %}
 
 {% block body %}
-{# {% for user in users %} #}
-	
-{# {% endfor %} #}
+	<pre>
+	{{ app.user.firstname }}
+	{{ app.user.lastname }}
+	{{ app.user.email }}
+	{{ app.user.birthdayDate|date('d/m/Y') }}
+	</pre>
+	<hr>
+	{% if app.user.adresses|length == 0 %}
+		<p>Vous n'avez pas d'adresse enregistrée</p>
+	{% else %}
+		{% for adress in app.user.adresses %}
+			<div class="card" style="width: 18rem;">
+				<div class="card-body">
+					<h5 class="card-title">{{ adress.name }}</h5>
+					<p class="card-text">{{ adress.fullName }}</p>
+					<p class="card-text">{{ adress.adresse }}</p>
+					<p class="card-text">{{ adress.postalCode }}
+						{{ adress.City }}</p>
+					<p class="card-text">{{ adress.country }}</p>
+					<p class="card-text">{{ adress.phoneNumber }}</p>
+					<a href="{{ path('app_edit_adress', {'id': adress.id}) }}" class="btn btn-primary">Modifier</a>
+					<a href="{{ path('app_delete_adress', {'id': adress.id}) }}" class="btn btn-danger">Supprimer</a>
+				</div>
+			</div>
+		{% endfor %}
+	{% endif %}
 
 	<a href="{{ path('app_edit_user')}}" class="btn btn-primary">Modifier ses informations</a>
+	<a href="{{ path('app_new_adress')}}" class="btn btn-primary">Ajouter une adresse</a>
 {% endblock %}

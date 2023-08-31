@@ -34,7 +34,7 @@ class InformationsChangeUserType extends AbstractType
                     'class' => 'form-control',
                 ]
             ])
-            ->add('birthday_date', BirthdayType::class, [
+            ->add('birthdayDate', BirthdayType::class, [
                 'label' => 'Votre date de naissance',
                 'attr' => [
                     'class' => 'form-control',

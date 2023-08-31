@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Adresses;
 use App\Entity\User;
+use App\Form\AdressesType;
 use App\Form\InformationsChangeUserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,12 +27,10 @@ class UserController extends AbstractController
     // Edit adresses
 
     /**
-     * @Route("/profil/", name="app_user")
+     * @Route("/profil", name="app_user")
      */
     public function index(): Response
     {
-        // $user = $this->entityManager->getRepository(User::class)->findOneBySlug($slug);
-        // dd($user);
         if ($this->getUser()) {
             return $this->render('user/index.html.twig');
         } else {
@@ -61,5 +61,70 @@ class UserController extends AbstractController
         } else {
             return $this->redirectToRoute('app_home');
         }
+    }
+
+    /**
+     * @Route("/profil/ajout-adresse", name="app_new_adress")
+     */
+    public function addAdress(Request $request): Response
+    {
+        $adress = new Adresses();
+        $form = $this->createForm(AdressesType::class, $adress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $adress = $form->getData();
+            $adress->setUser($this->getUser()); // Associer le user à l'adresse
+
+            $this->entityManager->persist($adress);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('app_user');
+        }
+
+        return $this->render('user/newAdress.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/profil/modifier-adresse/{id}", name="app_edit_adress")
+     */
+    public function editAdress(Request $request, $id): Response
+    {
+        $idAdress = $this->entityManager->getRepository(Adresses::class)->find($id);
+
+        if (!$idAdress || $idAdress->getUser() != $this->getUser()) {
+            return $this->redirectToRoute('app_user');
+        }
+
+        $form = $this->createForm(AdressesType::class, $idAdress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('app_user');
+        }
+        return $this->render('user/editAdress.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/profil/supprimer-adresse/{id}", name="app_delete_adress")
+     */
+    public function deleteAdress($id): Response
+    {
+        $idAdress = $this->entityManager->getRepository(Adresses::class)->find($id);
+
+        if ($idAdress && $idAdress->getUser() == $this->getUser()) {
+            $this->entityManager->remove($idAdress);
+            $this->entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_user');
     }
 }
